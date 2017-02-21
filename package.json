@@ -183,7 +183,7 @@
     "file-loader": "^0.10.0",
     "font-awesome": "^4.7.0",
     "font-awesome-webpack": "^0.0.4",
-    "happypack": "^3.0.2",
+    "happypack": "^3.0.3",
     "html-webpack-plugin": "^2.28.0",
     "jest": "^18.1.0",
     "karma": "^1.4.1",
