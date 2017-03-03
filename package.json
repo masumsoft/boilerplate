@@ -115,7 +115,7 @@
     "cookie-parser": "^1.4.3",
     "express": "^4.14.1",
     "express-session": "^1.15.1",
-    "feathers": "^2.0.3",
+    "feathers": "^2.1.1",
     "feathers-authentication": "^1.0.2",
     "feathers-authentication-client": "^0.1.8",
     "feathers-authentication-jwt": "^0.3.1",
