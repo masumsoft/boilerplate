@@ -121,7 +121,7 @@
     "feathers-authentication-jwt": "^0.3.1",
     "feathers-authentication-local": "^0.3.3",
     "feathers-authentication-oauth1": "^0.2.3",
-    "feathers-authentication-oauth2": "^0.2.3",
+    "feathers-authentication-oauth2": "^0.2.4",
     "feathers-errors": "^2.5.0",
     "feathers-hooks": "^1.7.1",
     "feathers-hooks-common": "^2.0.3",
