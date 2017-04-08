@@ -141,7 +141,7 @@
     "nedb": "^1.8.0",
     "passport-facebook-token": "^3.3.0",
     "pretty-error": "^2.0.2",
-    "react": "^15.4.2",
+    "react": "^15.5.1",
     "react-bootstrap": "^0.30.7",
     "react-dom": "^15.4.2",
     "react-helmet": "^4.0.0",
