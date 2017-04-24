@@ -196,7 +196,7 @@
     "less": "^2.7.2",
     "less-loader": "^4.0.3",
     "lighthouse": "^1.5.1",
-    "mocha": "^3.2.0",
+    "mocha": "^3.3.0",
     "node-sass": "^4.5.0",
     "phantomjs-polyfill": "^0.0.2",
     "phantomjs-prebuilt": "^2.1.14",
