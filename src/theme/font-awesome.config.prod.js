@@ -1,6 +1,7 @@
 const buildExtractStylesLoader = require('./buildExtractStylesLoader');
 const fontAwesomeConfig = require('./font-awesome.config.js');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+
 fontAwesomeConfig.styleLoader = buildExtractStylesLoader(ExtractTextPlugin.extract({
   fallback: 'style-loader',
   use: [
@@ -21,4 +22,5 @@ fontAwesomeConfig.styleLoader = buildExtractStylesLoader(ExtractTextPlugin.extra
     }
   ]
 }));
+
 module.exports = fontAwesomeConfig;
