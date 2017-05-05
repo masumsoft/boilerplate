@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { renderIntoDocument } from 'react-addons-test-utils';
+import { renderIntoDocument } from 'react-dom/test-utils';
 import { expect } from 'chai';
 import { InfoBar } from 'components';
 import { Provider } from 'react-redux';
