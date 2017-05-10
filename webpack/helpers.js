@@ -32,7 +32,7 @@ function installVendorDLL(config, dllName) {
   var manifest = loadDLLManifest(path.join(projectRootPath, `webpack/dlls/${dllName}.json`));
 
   if (manifest) {
-    console.log(`Webpack: will be using the ${dllName} DLL.`);
+    console.log(`==> 📦  Webpack: will be using the ${dllName} DLL.`);
 
     config.plugins.push(new webpack.DllReferencePlugin({
       context: projectRootPath,
