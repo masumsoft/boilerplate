@@ -70,7 +70,13 @@ proxy.on('error', (error, req, res) => {
     res.writeHead(500, { 'content-type': 'application/json' });
   }
 
-  const json = { error: 'proxy_error', reason: error.message || error };
+  const json = {
+    error: {
+      name: error.name,
+      message: error.message,
+      code: 500,
+    },
+  };
   res.end(JSON.stringify(json));
 });
 
