@@ -8,45 +8,47 @@ import * as authActions from 'redux/modules/auth';
 import * as notifActions from 'redux/modules/notifs';
 
 @connect(
-  state => ({ user: state.auth.user }),
+  (state) => ({ user: state.auth.user }),
   { ...notifActions, ...authActions })
 export default class Login extends Component {
   static propTypes = {
     user: PropTypes.object,
     login: PropTypes.func.isRequired,
     logout: PropTypes.func.isRequired,
-    notifSend: PropTypes.func.isRequired
+    notifSend: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
-    user: null
+    user: null,
   }
 
   static contextTypes = {
-    router: PropTypes.object
+    router: PropTypes.object,
   }
 
   onFacebookLogin = (err, data) => {
-    if (err) return;
+    if (err) {
+      return;
+    }
     this.props.login('facebook', data, false)
       .then(this.successLogin)
-      .catch(error => {
+      .catch((error) => {
         if (error.message === 'Incomplete oauth registration') {
           this.context.router.push({
             pathname: '/register',
-            state: { oauth: error.data }
+            state: { oauth: error.data },
           });
         }
       });
   };
 
-  login = data => this.props.login('local', data).then(this.successLogin);
+  login = (data) => this.props.login('local', data).then(this.successLogin);
 
-  successLogin = data => {
+  successLogin = (data) => {
     this.props.notifSend({
       message: 'You\'r logged !',
       kind: 'success',
-      dismissAfter: 2000
+      dismissAfter: 2000,
     });
     return data;
   };

@@ -12,16 +12,16 @@ const { isLoaded, load: loadWidgets } = widgetActions;
   deferred: true,
   promise: ({ store: { dispatch, getState } }) => {
     if (!isLoaded(getState())) {
-      return dispatch(loadWidgets());
+      dispatch(loadWidgets());
     }
-  }
+  },
 }])
 @connect(
-  state => ({
+  (state) => ({
     widgets: state.widgets.data,
     editing: state.widgets.editing,
     error: state.widgets.error,
-    loading: state.widgets.loading
+    loading: state.widgets.loading,
   }),
   { ...widgetActions })
 export default class Widgets extends Component {
@@ -31,17 +31,17 @@ export default class Widgets extends Component {
     loading: PropTypes.bool,
     editing: PropTypes.object.isRequired,
     load: PropTypes.func.isRequired,
-    editStart: PropTypes.func.isRequired
+    editStart: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
     widgets: null,
     error: null,
-    loading: false
+    loading: false,
   }
 
   render() {
-    const handleEdit = widget => {
+    const handleEdit = (widget) => {
       const { editStart } = this.props;
       return () => editStart(String(widget.id));
     };
@@ -83,7 +83,7 @@ export default class Widgets extends Component {
           <tbody>
             {
               /* eslint-disable react/jsx-indent */
-              widgets.map(widget => (editing[widget.id] ?
+              widgets.map((widget) => (editing[widget.id] ?
                 <WidgetForm form={String(widget.id)} key={String(widget.id)} initialValues={widget} /> :
                 <tr key={widget.id}>
                   <td className={styles.idCol}>{widget.id}</td>
@@ -95,7 +95,7 @@ export default class Widgets extends Component {
                       <i className="fa fa-pencil" /> Edit
                     </button>
                   </td>
-                </tr>)
+                </tr>),
               )
               /* eslint-enable react/jsx-indent */
             }

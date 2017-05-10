@@ -6,10 +6,10 @@ function createAsyncValidator(rules, params) {
     const errors = validation.createValidator(rules, params)(data);
 
     const promises = Object.keys(errors)
-      .map(name => {
+      .map((name) => {
         const error = errors[name];
         const myResolve = () => ({ status: 'resolved', name });
-        const myReject = err => ({ status: 'rejected', name, error: err });
+        const myReject = (err) => ({ status: 'rejected', name, error: err });
 
         if (isPromise(error)) {
           return error.then(myResolve).catch(myReject);
@@ -19,9 +19,9 @@ function createAsyncValidator(rules, params) {
       });
 
     return Promise.all(promises)
-      .then(results => {
+      .then((results) => {
         const finalErrors = results
-          .filter(x => x.status === 'rejected')
+          .filter((x) => x.status === 'rejected')
           .reduce((prev, next) => ({ ...prev, [next.name]: next.error }), {});
 
         return Object.keys(finalErrors).length ? Promise.reject(finalErrors) : Promise.resolve(data);
@@ -31,9 +31,9 @@ function createAsyncValidator(rules, params) {
 
 function unique(field) {
   return (value, data, { hook }) => hook.service.find({ query: { [field]: value } })
-    .then(result => {
+    .then((result) => {
       if (result.total !== 0) {
-        return Promise.reject('Already exist');
+        Promise.reject('Already exist');
       }
     });
 }
@@ -41,5 +41,5 @@ function unique(field) {
 module.exports = {
   ...validation,
   unique,
-  createAsyncValidator
+  createAsyncValidator,
 };

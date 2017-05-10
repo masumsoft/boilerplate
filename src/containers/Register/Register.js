@@ -13,7 +13,7 @@ export default class Register extends Component {
   static propTypes = {
     location: PropTypes.object.isRequired,
     register: PropTypes.func.isRequired,
-    notifSend: PropTypes.func.isRequired
+    notifSend: PropTypes.func.isRequired,
   }
 
   getInitialValues = () => {
@@ -21,13 +21,13 @@ export default class Register extends Component {
     return location.state && location.state.oauth;
   }
 
-  register = data => this.props.register(data).then(this.successRegister);
+  register = (data) => this.props.register(data).then(this.successRegister);
 
-  successRegister = result => {
+  successRegister = (result) => {
     this.props.notifSend({
       message: 'You\'r now registered !',
       kind: 'success',
-      dismissAfter: 2000
+      dismissAfter: 2000,
     });
     return result;
   }

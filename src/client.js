@@ -4,6 +4,7 @@
 import 'babel-polyfill';
 import React from 'react';
 import ReactDOM from 'react-dom';
+import * as logger from 'loglevel';
 import { applyRouterMiddleware, Router, browserHistory, match } from 'react-router';
 import { syncHistoryWithStore } from 'react-router-redux';
 import { ReduxAsyncConnect } from 'redux-connect';
@@ -18,9 +19,11 @@ import ApiClient from './helpers/ApiClient';
 import getRoutes from './routes';
 import isOnline from './utils/isOnline';
 
+logger.setLevel('debug');
+
 const offlinePersistConfig = {
   storage: localForage,
-  whitelist: ['auth', 'info', 'chat']
+  whitelist: ['auth', 'info', 'chat'],
 };
 
 const client = new ApiClient();
@@ -29,12 +32,11 @@ const restApp = createApp('rest');
 const dest = document.getElementById('content');
 
 function initSocket() {
-  socket.on('news', data => {
-    console.log(data);
-    socket.emit('my other event', { my: 'data from client' });
+  socket.on('news', (data) => {
+    logger.info(data);
   });
-  socket.on('msg', data => {
-    console.log(data);
+  socket.on('msg', (data) => {
+    logger.info(data);
   });
 
   return socket;
@@ -44,7 +46,9 @@ global.socket = initSocket();
 
 Promise.all([window.__data ? true : isOnline(), getStoredState(offlinePersistConfig)])
   .then(([online, storedData]) => {
-    if (online) socket.open();
+    if (online) {
+      socket.open();
+    }
 
     // if your server doesn't authenticate socket connexion by cookie
     // if (online) app.authenticate().catch(() => null);
@@ -53,14 +57,14 @@ Promise.all([window.__data ? true : isOnline(), getStoredState(offlinePersistCon
     const store = createStore(browserHistory, { client, app, restApp }, data, offlinePersistConfig);
     const history = syncHistoryWithStore(browserHistory, store);
 
-    const renderRouter = props => <ReduxAsyncConnect
+    const renderRouter = (props) => <ReduxAsyncConnect
       {...props}
       helpers={{ client, app, restApp }}
-      filter={item => !item.deferred}
+      filter={(item) => !item.deferred}
       render={applyRouterMiddleware(useScroll())}
     />;
 
-    const render = routes => {
+    const render = (routes) => {
       match({ history, routes }, (error, redirectLocation, renderProps) => {
         ReactDOM.render(
           <HotEnabler>
@@ -70,7 +74,7 @@ Promise.all([window.__data ? true : isOnline(), getStoredState(offlinePersistCon
               </Router>
             </Provider>
           </HotEnabler>,
-          dest
+          dest,
         );
       });
     };
@@ -89,7 +93,7 @@ Promise.all([window.__data ? true : isOnline(), getStoredState(offlinePersistCon
 
       if (!dest || !dest.firstChild || !dest.firstChild.attributes
         || !dest.firstChild.attributes['data-react-checksum']) {
-        console.error('Server-side React render was discarded.' +
+        logger.error('Server-side React render was discarded.' +
           'Make sure that your initial render does not contain any client-side code.');
       }
     }
@@ -102,21 +106,21 @@ Promise.all([window.__data ? true : isOnline(), getStoredState(offlinePersistCon
         <Provider store={store} key="provider">
           <DevTools />
         </Provider>,
-        devToolsDest
+        devToolsDest,
       );
     }
 
     if (online && !__DEVELOPMENT__ && 'serviceWorker' in navigator) {
       navigator.serviceWorker.register('/service-worker.js', { scope: '/' })
         .then(() => {
-          console.log('Service worker registered!');
+          logger.info('Service worker registered');
         })
-        .catch(error => {
-          console.log('Error registering service worker: ', error);
+        .catch((error) => {
+          logger.error('Error registering service worker', error);
         });
 
       navigator.serviceWorker.ready.then((/* registration */) => {
-        console.log('Service Worker Ready');
+        logger.info('Service worker ready');
       });
     }
   });

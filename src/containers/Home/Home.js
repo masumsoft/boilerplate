@@ -7,14 +7,14 @@ import Helmet from 'react-helmet';
 import { connect } from 'react-redux';
 
 @connect(
-  state => ({
-    online: state.online
-  })
+  (state) => ({
+    online: state.online,
+  }),
 )
 export default class Home extends Component {
 
   static propTypes = {
-    online: PropTypes.bool.isRequired
+    online: PropTypes.bool.isRequired,
   };
 
   render() {

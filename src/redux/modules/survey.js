@@ -12,7 +12,7 @@ export function isValidEmail(data) {
   return {
     types: [IS_VALID, IS_VALID_SUCCESS, IS_VALID_FAIL],
     promise: ({ client }) => client.post('/survey/isValid', {
-      data
-    })
+      data,
+    }),
   };
 }

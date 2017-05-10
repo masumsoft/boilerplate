@@ -10,17 +10,17 @@ fontAwesomeConfig.styleLoader = buildExtractStylesLoader(ExtractTextPlugin.extra
       query: {
         modules: true,
         importLoaders: 3,
-        sourceMap: true
-      }
+        sourceMap: true,
+      },
     }, {
       loader: 'less-loader',
       query: {
         outputStyle: 'expanded',
         sourceMap: true,
-        sourceMapContents: true
-      }
-    }
-  ]
+        sourceMapContents: true,
+      },
+    },
+  ],
 }));
 
 module.exports = fontAwesomeConfig;

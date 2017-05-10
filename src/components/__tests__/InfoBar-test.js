@@ -17,16 +17,18 @@ describe('InfoBar', () => {
       loading: false,
       data: {
         message: 'This came from the api server',
-        time: Date.now()
-      }
-    }
+        time: Date.now(),
+      },
+    },
   };
   const store = createStore(browserHistory, { client }, mockStore);
   const renderer = renderIntoDocument(
     <Provider store={store} key="provider">
       <InfoBar />
-    </Provider>
+    </Provider>,
   );
+
+  // eslint-disable-next-line react/no-find-dom-node
   const dom = ReactDOM.findDOMNode(renderer); // TODO replace findDOMNode method
 
   it('should render correctly', () => expect(renderer).to.be.ok);

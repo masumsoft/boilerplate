@@ -4,20 +4,21 @@ import { connect } from 'react-redux';
 import { load } from 'redux/modules/info';
 
 @connect(
-  state => ({ info: state.info.data }),
+  (state) => ({ info: state.info.data }),
   { load })
 export default class InfoBar extends Component {
   static propTypes = {
     info: PropTypes.object,
-    load: PropTypes.func.isRequired
+    load: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
-    info: null
+    info: null,
   };
 
   render() {
-    const { info, load } = this.props; // eslint-disable-line no-shadow
+    // eslint-disable-next-line no-shadow
+    const { info, load } = this.props;
     const styles = require('./InfoBar.scss');
     return (
       <div className={`${styles.infoBar} well`}>

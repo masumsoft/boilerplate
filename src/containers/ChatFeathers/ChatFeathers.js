@@ -3,18 +3,19 @@ import PropTypes from 'prop-types';
 import { asyncConnect } from 'redux-connect';
 import { connect } from 'react-redux';
 import { withApp } from 'app';
+import * as logger from 'loglevel';
 import * as chatActions from 'redux/modules/chat';
 
 @withApp
 @asyncConnect([{
-  promise: ({ store: { dispatch } }) => dispatch(chatActions.load())
+  promise: ({ store: { dispatch } }) => dispatch(chatActions.load()),
 }])
 @connect(
-  state => ({
+  (state) => ({
     user: state.auth.user,
-    messages: state.chat.messages
+    messages: state.chat.messages,
   }),
-  { ...chatActions }
+  { ...chatActions },
 )
 export default class ChatFeathers extends Component {
 
@@ -22,12 +23,12 @@ export default class ChatFeathers extends Component {
     app: PropTypes.object.isRequired,
     user: PropTypes.object.isRequired,
     addMessage: PropTypes.func.isRequired,
-    messages: PropTypes.array.isRequired
+    messages: PropTypes.array.isRequired,
   };
 
   state = {
     message: '',
-    error: null
+    error: null,
   };
 
   componentDidMount() {
@@ -38,12 +39,12 @@ export default class ChatFeathers extends Component {
     this.props.app.service('messages').removeListener('created', this.props.addMessage);
   }
 
-  handleSubmit = event => {
+  handleSubmit = (event) => {
     event.preventDefault();
     this.props.app.service('messages').create({ text: this.state.message })
       .then(() => this.setState({ message: '', error: false }))
-      .catch(error => {
-        console.log(error);
+      .catch((error) => {
+        logger.error(error);
         this.setState({ error: error.message || false });
       });
   }
@@ -58,12 +59,12 @@ export default class ChatFeathers extends Component {
 
         {user && <div>
           <ul>
-            {messages.map(msg => <li key={`chat.msg.${msg._id}`}>{msg.sentBy.email}: {msg.text}</li>)}
+            {messages.map((msg) => <li key={`chat.msg.${msg._id}`}>{msg.sentBy.email}: {msg.text}</li>)}
           </ul>
           <form onSubmit={this.handleSubmit}>
             <input
-              type="text" ref={c => { this.message = c; }} placeholder="Enter your message" value={this.state.message}
-              onChange={event => this.setState({ message: event.target.value })}
+              type="text" ref={(c) => { this.message = c; }} placeholder="Enter your message" value={this.state.message}
+              onChange={(event) => this.setState({ message: event.target.value })}
             />
             <button className="btn" onClick={this.handleSubmit}>Send</button>
             {error && <div className="text-danger">{error}</div>}

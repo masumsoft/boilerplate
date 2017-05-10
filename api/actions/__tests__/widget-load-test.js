@@ -15,13 +15,13 @@ describe('widget load', () => {
     });
 
     it('uses the widgets from the session', () => {
-      load({ session: { user: {}, widgets: ['a', 'b', 'c'] } }, undefined).then(widgets => {
+      load({ session: { user: {}, widgets: ['a', 'b', 'c'] } }, undefined).then((widgets) => {
         expect(widgets.length).to.equal(3);
       });
     });
 
     it('initializes the widgets ', () => {
-      load({ session: { user: {} } }, undefined).then(widgets => {
+      load({ session: { user: {} } }, undefined).then((widgets) => {
         expect(widgets.length).to.equal(4);
         expect(widgets[0].color).to.equal('Red');
       });
@@ -36,7 +36,7 @@ describe('widget load', () => {
     it('rejects the call', () => {
       load({ session: { user: {} } }, undefined).then(
         () => {},
-        err => {
+        (err) => {
           expect(err).to.equal('Widget load fails 33% of the time. You were unlucky.');
         });
     });

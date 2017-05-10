@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 import { initialize } from 'redux-form';
+import * as logger from 'loglevel';
 import SurveyForm from 'components/SurveyForm/SurveyForm';
 
 @connect(
@@ -10,11 +11,11 @@ import SurveyForm from 'components/SurveyForm/SurveyForm';
   { initialize })
 export default class Survey extends Component {
   static propTypes = {
-    initialize: PropTypes.func.isRequired
+    initialize: PropTypes.func.isRequired,
   }
 
-  handleSubmit = data => {
-    window.alert(`Data submitted! ${JSON.stringify(data)}`);
+  handleSubmit = (data) => {
+    logger.info(`Data submitted! ${JSON.stringify(data)}`);
     this.props.initialize('survey', {});
   }
 
@@ -24,7 +25,7 @@ export default class Survey extends Component {
       email: 'bobby@gmail.com',
       occupation: 'Redux Wizard',
       currentlyEmployed: true,
-      sex: 'male'
+      sex: 'male',
     });
   }
 

@@ -5,30 +5,32 @@ import { UserAuthWrapper } from 'redux-auth-wrapper';
 import { App, Home, NotFound } from 'containers';
 import getRoutesUtils from 'utils/routes';
 
-// eslint-disable-next-line import/no-dynamic-require
-if (typeof System.import === 'undefined') System.import = module => Promise.resolve(require(module));
+if (typeof System.import === 'undefined') {
+  // eslint-disable-next-line import/no-dynamic-require
+  System.import = (module) => Promise.resolve(require(module));
+}
 
-export default store => {
+export default (store) => {
   const {
     injectReducerAndRender,
-    permissionsComponent
+    permissionsComponent,
   } = getRoutesUtils(store);
 
   /* Permissions */
 
   const isAuthenticated = UserAuthWrapper({
-    authSelector: state => state.auth.user,
+    authSelector: (state) => state.auth.user,
     redirectAction: routerActions.replace,
-    wrapperDisplayName: 'UserIsAuthenticated'
+    wrapperDisplayName: 'UserIsAuthenticated',
   });
 
   const isNotAuthenticated = UserAuthWrapper({
-    authSelector: state => state.auth.user,
+    authSelector: (state) => state.auth.user,
     redirectAction: routerActions.replace,
     wrapperDisplayName: 'UserIsNotAuthenticated',
-    predicate: user => !user,
+    predicate: (user) => !user,
     failureRedirectPath: '/',
-    allowRedirectBack: false
+    allowRedirectBack: false,
   });
 
   /**
@@ -50,7 +52,7 @@ export default store => {
           path="chatFeathers"
           getComponent={() => injectReducerAndRender(
             { chat: System.import('./redux/modules/chat') },
-            System.import('./containers/ChatFeathers/ChatFeathers')
+            System.import('./containers/ChatFeathers/ChatFeathers'),
           )}
         />
       </Route>
@@ -67,14 +69,14 @@ export default store => {
         path="survey"
         getComponent={() => injectReducerAndRender(
           { survey: System.import('./redux/modules/survey') },
-          System.import('./containers/Survey/Survey')
+          System.import('./containers/Survey/Survey'),
         )}
       />
       <Route
         path="widgets"
         getComponent={() => injectReducerAndRender(
           { widgets: System.import('./redux/modules/widgets') },
-          System.import('./containers/Widgets/Widgets')
+          System.import('./containers/Widgets/Widgets'),
         )}
       />
       <Route path="chat" getComponent={() => System.import('./containers/Chat/Chat')} />

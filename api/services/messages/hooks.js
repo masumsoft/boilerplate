@@ -4,7 +4,7 @@ import { required } from 'utils/validation';
 import { validateHook as validate } from 'hooks';
 
 const schemaValidator = {
-  text: required
+  text: required,
 };
 
 function populateUser() {
@@ -14,9 +14,9 @@ function populateUser() {
         nameAs: 'sentBy',
         service: 'users',
         parentField: 'sentBy',
-        childField: '_id'
-      }]
-    }
+        childField: '_id',
+      }],
+    },
   });
 }
 
@@ -27,36 +27,36 @@ const messagesHooks = {
     get: [],
     create: [
       validate(schemaValidator),
-      hook => {
+      (hook) => {
         hook.data = {
           text: hook.data.text,
           sentBy: hook.params.user._id, // Set the id of current user
-          createdAt: new Date()
+          createdAt: new Date(),
         };
-      }
+      },
     ],
     update: hooks.disable(),
     patch: hooks.disable(),
-    remove: hooks.disable()
+    remove: hooks.disable(),
   },
   after: {
     all: [],
     find: [
       populateUser(),
-      hooks.remove('sentBy.password')
+      hooks.remove('sentBy.password'),
     ],
     get: [
       populateUser(),
-      hooks.remove('sentBy.password')
+      hooks.remove('sentBy.password'),
     ],
     create: [
       populateUser(),
-      hooks.remove('sentBy.password')
+      hooks.remove('sentBy.password'),
     ],
     update: [],
     patch: [],
-    remove: []
-  }
+    remove: [],
+  },
 };
 
 export default messagesHooks;

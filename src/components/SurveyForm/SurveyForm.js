@@ -6,7 +6,9 @@ import { isValidEmail } from 'redux/modules/survey';
 import surveyValidation from './surveyValidation';
 
 function asyncValidate(data, dispatch) {
-  if (!data.email) return Promise.resolve();
+  if (!data.email) {
+    return Promise.resolve();
+  }
   return dispatch(isValidEmail(data));
 }
 
@@ -14,12 +16,12 @@ function asyncValidate(data, dispatch) {
   form: 'survey',
   validate: surveyValidation,
   asyncValidate,
-  asyncBlurFields: ['email']
+  asyncBlurFields: ['email'],
 })
 @connect(
-  state => ({
-    active: state.form.survey.active
-  })
+  (state) => ({
+    active: state.form.survey.active,
+  }),
 )
 export default
 class SurveyForm extends Component {
@@ -27,23 +29,23 @@ class SurveyForm extends Component {
     active: PropTypes.string,
     asyncValidating: PropTypes.oneOfType([
       PropTypes.bool,
-      PropTypes.string
+      PropTypes.string,
     ]).isRequired,
     dirty: PropTypes.bool.isRequired,
     handleSubmit: PropTypes.func.isRequired,
     reset: PropTypes.func.isRequired,
     invalid: PropTypes.bool.isRequired,
     pristine: PropTypes.bool.isRequired,
-    valid: PropTypes.bool.isRequired
+    valid: PropTypes.bool.isRequired,
   }
 
   static defaultProps = {
-    active: null
+    active: null,
   }
 
   renderInput = ({
     input, label, type, showAsyncValidating, className, styles,
-    meta: { touched, error, dirty, active, visited, asyncValidating }
+    meta: { touched, error, dirty, active, visited, asyncValidating },
   }) =>
     <div className={`form-group ${error && touched ? 'has-error' : ''}`}>
       <label htmlFor={input.name} className="col-sm-2">{label}</label>
@@ -69,7 +71,7 @@ class SurveyForm extends Component {
       invalid,
       reset,
       pristine,
-      valid
+      valid,
     } = this.props;
     const styles = require('./SurveyForm.scss');
 

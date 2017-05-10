@@ -9,14 +9,18 @@ export default class GithubButton extends Component {
     width: PropTypes.number.isRequired,
     height: PropTypes.number.isRequired,
     count: PropTypes.bool.isRequired,
-    large: PropTypes.bool.isRequired
+    large: PropTypes.bool.isRequired,
   };
 
   render() {
     const { user, repo, type, width, height, count, large } = this.props;
     let src = `https://ghbtns.com/github-btn.html?user=${user}&repo=${repo}&type=${type}`;
-    if (count) src += '&count=true';
-    if (large) src += '&size=large';
+    if (count) {
+      src += '&count=true';
+    }
+    if (large) {
+      src += '&size=large';
+    }
 
     return (
       <iframe

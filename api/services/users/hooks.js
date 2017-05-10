@@ -8,11 +8,11 @@ import { required, email, match, unique } from 'utils/validation';
 const schemaValidator = {
   email: [required, email, unique('email')],
   password: required,
-  password_confirmation: [required, match('password')]
+  password_confirmation: [required, match('password')],
 };
 
 function validate() {
-  return hook => {
+  return (hook) => {
     if (hook.data.facebook && !hook.data.email) {
       throw new errors.BadRequest('Incomplete oauth registration', hook.data);
     }
@@ -27,20 +27,20 @@ const userHooks = {
     create: [
       validate(),
       hooks.remove('password_confirmation'),
-      local.hooks.hashPassword()
+      local.hooks.hashPassword(),
     ],
     update: [
       auth.hooks.authenticate('jwt'),
-      restrictToOwner({ ownerField: '_id' })
+      restrictToOwner({ ownerField: '_id' }),
     ],
     patch: [
       auth.hooks.authenticate('jwt'),
-      restrictToOwner({ ownerField: '_id' })
+      restrictToOwner({ ownerField: '_id' }),
     ],
     remove: [
       auth.hooks.authenticate('jwt'),
-      restrictToOwner({ ownerField: '_id' })
-    ]
+      restrictToOwner({ ownerField: '_id' }),
+    ],
   },
   after: {
     all: hooks.remove('password'),
@@ -49,8 +49,8 @@ const userHooks = {
     create: [],
     update: [],
     patch: [],
-    remove: []
-  }
+    remove: [],
+  },
 };
 
 export default userHooks;

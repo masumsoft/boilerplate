@@ -2,7 +2,7 @@ const initialWidgets = [
   { id: 1, color: 'Red', sprocketCount: 7, owner: 'John' },
   { id: 2, color: 'Taupe', sprocketCount: 1, owner: 'George' },
   { id: 3, color: 'Green', sprocketCount: 8, owner: 'Ringo' },
-  { id: 4, color: 'Blue', sprocketCount: 2, owner: 'Paul' }
+  { id: 4, color: 'Blue', sprocketCount: 2, owner: 'Paul' },
 ];
 
 export function getWidgets(req) {
@@ -19,7 +19,7 @@ export default function load(req) {
     // make async call to database
     setTimeout(() => {
       if (Math.random() < 0.33) {
-        reject('Widget load fails 33% of the time. You were unlucky.');
+        reject(new Error('Widget load fails 33% of the time. You were unlucky.'));
       } else {
         resolve(getWidgets(req));
       }

@@ -5,7 +5,7 @@ const ADD_MESSAGE = 'redux-example/chat/ADD_MESSAGE';
 
 const initialState = {
   loaded: false,
-  messages: []
+  messages: [],
 };
 
 export default function reducer(state = initialState, action = {}) {
@@ -13,26 +13,26 @@ export default function reducer(state = initialState, action = {}) {
     case LOAD:
       return {
         ...state,
-        loading: true
+        loading: true,
       };
     case LOAD_SUCCESS:
       return {
         ...state,
         loading: false,
         loaded: true,
-        messages: action.result.data
+        messages: action.result.data,
       };
     case LOAD_FAIL:
       return {
         ...state,
         loading: false,
         loaded: false,
-        error: action.error
+        error: action.error,
       };
     case ADD_MESSAGE:
       return {
         ...state,
-        messages: state.messages.concat(action.message)
+        messages: state.messages.concat(action.message),
       };
     default:
       return state;
@@ -49,9 +49,9 @@ export function load() {
     promise: ({ app }) => app.service('messages').find({
       query: {
         $sort: { createdAt: -1 },
-        $limit: 25
-      }
-    }).then(page => ({ ...page, data: page.data.reverse() }))
+        $limit: 25,
+      },
+    }).then((page) => ({ ...page, data: page.data.reverse() })),
   };
 }
 

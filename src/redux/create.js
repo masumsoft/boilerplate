@@ -5,16 +5,21 @@ import createMiddleware from './middleware/clientMiddleware';
 import createReducers from './reducer';
 
 export function inject(store, name, asyncReducer) {
-  if (store.asyncReducers[name]) return;
+  if (store.asyncReducers[name]) {
+    return;
+  }
+  // eslint-disable-next-line no-param-reassign
   store.asyncReducers[name] = asyncReducer;
   store.replaceReducer(combineReducers(createReducers(store.asyncReducers)));
 }
 
 function getMissingReducers(reducers, data) {
-  if (!data) return {};
+  if (!data) {
+    return {};
+  }
   return Object.keys(data).reduce(
     (prev, next) => (reducers[next] ? prev : { ...prev, [next]: (state = {}) => state }),
-    {}
+    {},
   );
 }
 
@@ -28,7 +33,7 @@ export default function createStore(history, { client, app, restApp }, data, per
     enhancers = [
       ...enhancers,
       window.devToolsExtension ? window.devToolsExtension() : DevTools.instrument(),
-      persistState(window.location.href.match(/[?&]debug_session=([^&]+)\b/))
+      persistState(window.location.href.match(/[?&]debug_session=([^&]+)\b/)),
     ];
   }
 

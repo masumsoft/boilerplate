@@ -26,12 +26,12 @@ import { asyncConnect } from 'redux-connect';
       promises.push(dispatch(loadInfo()));
     }
     return Promise.all(promises);
-  }
+  },
 }])
 @connect(
-  state => ({
+  (state) => ({
     notifs: state.notifs,
-    user: state.auth.user
+    user: state.auth.user,
   }),
   { logout, pushState: push })
 export default class App extends Component {
@@ -41,15 +41,15 @@ export default class App extends Component {
     user: PropTypes.object,
     notifs: PropTypes.object.isRequired,
     logout: PropTypes.func.isRequired,
-    pushState: PropTypes.func.isRequired
+    pushState: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
-    user: null
+    user: null,
   };
 
   static contextTypes = {
-    store: PropTypes.object.isRequired
+    store: PropTypes.object.isRequired,
   };
 
   componentWillReceiveProps(nextProps) {
@@ -63,7 +63,7 @@ export default class App extends Component {
     }
   }
 
-  handleLogout = event => {
+  handleLogout = (event) => {
     event.preventDefault();
     this.props.logout();
   };
@@ -136,7 +136,7 @@ export default class App extends Component {
             <Notifs
               className={styles.notifs}
               namespace="global"
-              NotifComponent={props => <Alert bsStyle={props.kind}>{props.message}</Alert>}
+              NotifComponent={(props) => <Alert bsStyle={props.kind}>{props.message}</Alert>}
             />
           </div>}
 

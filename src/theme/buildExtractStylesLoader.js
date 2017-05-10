@@ -12,7 +12,7 @@ function encodeLoader(loader) {
   if (typeof loader.options !== 'undefined') {
     const query = Object
       .keys(loader.options)
-      .map(param => `${encodeURIComponent(param)}=${encodeURIComponent(loader.options[param])}`)
+      .map((param) => `${encodeURIComponent(param)}=${encodeURIComponent(loader.options[param])}`)
       .join('&');
     return `${loader.loader}?${query}`;
   }
@@ -30,7 +30,7 @@ module.exports = function buildExtractStylesLoader(loaders) {
 
   const restLoaders = loaders
     .slice(2)
-    .map(loader => {
+    .map((loader) => {
       if (typeof loader === 'string') {
         return loader;
       }
@@ -39,6 +39,6 @@ module.exports = function buildExtractStylesLoader(loaders) {
 
   return [
     extractTextLoader,
-    fallbackLoader
+    fallbackLoader,
   ].concat(restLoaders).join('!');
 };

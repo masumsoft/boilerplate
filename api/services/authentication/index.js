@@ -10,15 +10,15 @@ import { verifyJWT } from 'feathers-authentication/lib/utils';
 export socketAuth from './socketAuth';
 
 function populateUser(authConfig) {
-  return hook => verifyJWT(hook.result.accessToken, authConfig)
-    .then(payload => hook.app.service('users').get(payload.userId))
-    .then(user => {
+  return (hook) => verifyJWT(hook.result.accessToken, authConfig)
+    .then((payload) => hook.app.service('users').get(payload.userId))
+    .then((user) => {
       hook.result.user = user;
     });
 }
 
 function addTokenExpiration() {
-  return hook => {
+  return (hook) => {
     if (hook.result.accessToken) {
       hook.result.expires = hook.app.get('auth').cookie.maxAge || null;
     }
@@ -27,17 +27,19 @@ function addTokenExpiration() {
 }
 
 function restToSocketAuth() {
-  return hook => {
-    if (hook.params.provider !== 'rest') return hook;
+  return (hook) => {
+    if (hook.params.provider !== 'rest') {
+      return hook;
+    }
     const { accessToken, user } = hook.result;
     const { socketId } = hook.data;
     if (socketId && hook.app.io && accessToken) {
-      const userSocket = Object.values(hook.app.io.sockets.connected).find(socket => socket.client.id === socketId);
+      const userSocket = Object.values(hook.app.io.sockets.connected).find((socket) => socket.client.id === socketId);
       if (userSocket) {
         Object.assign(userSocket.feathers, {
           accessToken,
           user,
-          authenticated: true
+          authenticated: true,
         });
       }
     }
@@ -56,7 +58,7 @@ export default function authenticationService() {
     // .configure(oauth1()) // TODO twitter example
     .configure(oauth2({
       name: 'facebook', // if the name differs from your config key you need to pass your config options explicitly
-      Strategy: FacebookTokenStrategy
+      Strategy: FacebookTokenStrategy,
     }));
 
 
@@ -65,15 +67,15 @@ export default function authenticationService() {
       before: {
         // You can chain multiple strategies on create method
         create: auth.hooks.authenticate(['jwt', 'local', 'facebook']),
-        remove: auth.hooks.authenticate('jwt')
+        remove: auth.hooks.authenticate('jwt'),
       },
       after: {
         create: [
           populateUser(config),
           hooks.remove('user.password'),
           addTokenExpiration(),
-          restToSocketAuth()
-        ]
-      }
+          restToSocketAuth(),
+        ],
+      },
     });
 }

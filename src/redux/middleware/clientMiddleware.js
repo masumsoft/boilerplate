@@ -1,10 +1,13 @@
+import * as logger from 'loglevel';
+
 export default function clientMiddleware({ client, app, restApp }) {
-  return ({ dispatch, getState }) => next => action => {
+  return ({ dispatch, getState }) => (next) => (action) => {
     if (typeof action === 'function') {
       return action(dispatch, getState);
     }
 
-    const { promise, types, ...rest } = action; // eslint-disable-line no-redeclare
+    // eslint-disable-next-line no-redeclare
+    const { promise, types, ...rest } = action;
     if (!promise) {
       return next(action);
     }
@@ -14,10 +17,10 @@ export default function clientMiddleware({ client, app, restApp }) {
 
     const actionPromise = promise({ client, app, restApp }, dispatch);
     actionPromise.then(
-      result => next({ ...rest, result, type: SUCCESS }),
-      error => next({ ...rest, error, type: FAILURE })
-    ).catch(error => {
-      console.error('MIDDLEWARE ERROR:', error);
+      (result) => next({ ...rest, result, type: SUCCESS }),
+      (error) => next({ ...rest, error, type: FAILURE }),
+    ).catch((error) => {
+      logger.error(error);
       next({ ...rest, error, type: FAILURE });
     });
 

@@ -7,14 +7,14 @@ import widgetValidation, { colors } from './widgetValidation';
 
 @reduxForm({
   form: 'widget',
-  validate: widgetValidation
+  validate: widgetValidation,
 })
 @connect(
   (state, props) => ({
     saveError: state.widgets.saveError,
-    values: getFormValues(props.form)(state)
+    values: getFormValues(props.form)(state),
   }),
-  { ...widgetActions }
+  { ...widgetActions },
 )
 export default class WidgetForm extends Component {
   static propTypes = {
@@ -26,7 +26,7 @@ export default class WidgetForm extends Component {
     submitting: PropTypes.bool.isRequired,
     saveError: PropTypes.object.isRequired,
     form: PropTypes.string.isRequired,
-    values: PropTypes.object.isRequired
+    values: PropTypes.object.isRequired,
   };
 
   renderInput = ({ input, className, meta: { touched, error } }) => <div>
@@ -36,7 +36,7 @@ export default class WidgetForm extends Component {
 
   renderSelect = ({ options, input, className, meta: { touched, error } }) => <div>
     <select className={className} {...input}>
-      {options.map(option => <option value={option} key={option}>{option}</option>)}
+      {options.map((option) => <option value={option} key={option}>{option}</option>)}
     </select>
     {error && touched && <div className="text-danger">{error}</div>}
   </div>;
@@ -44,7 +44,7 @@ export default class WidgetForm extends Component {
   render() {
     const {
       editStop, form, handleSubmit, invalid, pristine, save,
-      submitting, saveError: { [form]: saveError }, values
+      submitting, saveError: { [form]: saveError }, values,
     } = this.props;
     const styles = require('containers/Widgets/Widgets.scss');
     return (
@@ -72,12 +72,12 @@ export default class WidgetForm extends Component {
           <button
             className="btn btn-success"
             onClick={handleSubmit(() => save(values)
-                .catch(err => {
+                .catch((err) => {
                   if (typeof err === 'object') {
                     throw new SubmissionError(err);
                   }
                   return Promise.reject(err);
-                })
+                }),
               )}
             disabled={pristine || invalid || submitting}>
             <i className={`fa ${submitting ? 'fa-cog fa-spin' : 'fa-cloud'}`} /> Save

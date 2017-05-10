@@ -8,7 +8,7 @@ export default function socketAuth(app) {
           const [name, value] = nextCookie.split('=');
           return {
             ...prev,
-            [name]: value
+            [name]: value,
           };
         }, {});
 
@@ -16,15 +16,18 @@ export default function socketAuth(app) {
 
     socket._feathers = {}; // TODO remove this when possible...
 
-    if (!accessToken) return next();
+    if (!accessToken) {
+      next();
+      return;
+    }
 
     verifyJWT(accessToken, app.get('auth'))
-      .then(payload => app.service('users').get(payload.userId))
-      .then(user => {
+      .then((payload) => app.service('users').get(payload.userId))
+      .then((user) => {
         Object.assign(socket.feathers, {
           accessToken,
           user,
-          authenticated: true
+          authenticated: true,
         });
         next();
       })
