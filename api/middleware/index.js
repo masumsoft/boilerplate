@@ -1,12 +1,12 @@
 import errorHandler from 'feathers-errors/handler';
 import notFound from './notFound';
-import logger from './logger';
+import errorLogger from './errorLogger';
 
 export default function middleware() {
   const app = this;
 
   app.use(notFound());
-  app.use(logger(app));
+  app.use(errorLogger(app));
   app.use(errorHandler({
     json: (error, req, res) => {
       res.json({ error });
