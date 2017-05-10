@@ -1,5 +1,5 @@
 import feathers from 'feathers';
-import morgan from 'morgan';
+import feathersLogger from 'feathers-logger';
 import session from 'express-session';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
@@ -7,28 +7,31 @@ import hooks from 'feathers-hooks';
 import rest from 'feathers-rest';
 import socketio from 'feathers-socketio';
 import isPromise from 'is-promise';
-import PrettyError from 'pretty-error';
 import publicConfig from '../src/config';
 import config from './config';
 import middleware from './middleware';
 import services from './services';
 import * as actions from './actions';
+import { winston, requestLogger, errorLogger } from './logger';
 import { mapUrl } from './utils/url.js';
 import auth, { socketAuth } from './services/authentication';
 
-process.on('unhandledRejection', error => console.error(error));
+process.on('unhandledRejection', (error) => {
+  error.name = 'UnhandledException';
+  winston.error(error);
+});
 
-const pretty = new PrettyError();
 const app = feathers();
 
 app.set('config', config)
-  .use(morgan('dev'))
+  .configure(feathersLogger(winston))
+  .use(requestLogger)
   .use(cookieParser())
   .use(session({
-    secret: 'react and redux rule!!!!',
+    secret: config.auth.secret,
     resave: false,
     saveUninitialized: false,
-    cookie: { maxAge: 60000 }
+    cookie: { maxAge: 60000 },
   }))
   .use(bodyParser.urlencoded({ extended: true }))
   .use(bodyParser.json());
@@ -38,9 +41,16 @@ const actionsHandler = (req, res, next) => {
 
   const { action, params } = mapUrl(actions, splittedUrlPath);
 
-  const catchError = error => {
-    console.error('API ERROR:', pretty.render(error));
-    res.status(error.status || 500).json(error);
+  const catchError = (error) => {
+    error.name = 'APIException';
+    app.error(error);
+    res.status(error.status || 500).json({
+      error: {
+        name: error.name,
+        message: error.message,
+        code: error.status || 500,
+      },
+    });
   };
 
   req.app = app;
@@ -49,14 +59,14 @@ const actionsHandler = (req, res, next) => {
     try {
       const handle = action(req, params);
       (isPromise(handle) ? handle : Promise.resolve(handle))
-        .then(result => {
+        .then((result) => {
           if (result instanceof Function) {
             result(res);
           } else {
             res.json(result);
           }
         })
-        .catch(reason => {
+        .catch((reason) => {
           if (reason && reason.redirect) {
             res.redirect(reason.redirect);
           } else {
@@ -75,20 +85,24 @@ app.configure(hooks())
   .configure(rest())
   .configure(socketio({ path: '/ws' }))
   .configure(auth)
+  .use(errorLogger)
   .use(actionsHandler)
   .configure(services)
   .configure(middleware);
 
 if (publicConfig.apiPort) {
-  app.listen(publicConfig.apiPort, err => {
+  app.listen(publicConfig.apiPort, (err) => {
     if (err) {
-      console.error(err);
+      err.name = 'StartupException';
+      app.error(err);
     }
-    console.info('----\n==> 🌎  API is running on port %s', publicConfig.apiPort);
-    console.info('==> 💻  Send requests to http://%s:%s', publicConfig.apiHost, publicConfig.apiPort);
+    app.info('==> ☁️  API is running on port %s', publicConfig.apiPort);
+    app.info('==> 💻  Send requests to http://%s:%s', publicConfig.apiHost, publicConfig.apiPort);
   });
 } else {
-  console.error('==>     ERROR: No APIPORT environment variable has been specified');
+  const err = new Error('No APIPORT environment variable has been specified');
+  err.name = 'StartupException';
+  app.error(err);
 }
 
 const bufferSize = 100;
@@ -97,9 +111,9 @@ let messageIndex = 0;
 
 app.io.use(socketAuth(app));
 
-app.io.on('connection', socket => {
+app.io.on('connection', (socket) => {
   const user = socket.feathers.user ? { ...socket.feathers.user, password: undefined } : undefined;
-  socket.emit('news', { msg: '\'Hello World!\' from server', user });
+  socket.emit('news', { msg: `Welcome to ${publicConfig.app.title}`, user });
 
   socket.on('history', () => {
     for (let index = 0; index < bufferSize; index++) {
@@ -111,10 +125,15 @@ app.io.on('connection', socket => {
     }
   });
 
-  socket.on('msg', data => {
+  socket.on('msg', (data) => {
     const message = { ...data, id: messageIndex };
     messageBuffer[messageIndex % bufferSize] = message;
     messageIndex++;
     app.io.emit('msg', message);
+  });
+
+  socket.on('clientErrorLog', (error) => {
+    error.name = 'ClientException';
+    app.error(error);
   });
 });

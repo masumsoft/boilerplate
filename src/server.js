@@ -6,7 +6,6 @@ import compression from 'compression';
 import cookieParser from 'cookie-parser';
 import httpProxy from 'http-proxy';
 import path from 'path';
-import PrettyError from 'pretty-error';
 import http from 'http';
 import { match } from 'react-router';
 import { syncHistoryWithStore } from 'react-router-redux';
@@ -20,15 +19,19 @@ import Html from 'helpers/Html';
 import getRoutes from 'routes';
 import { createApp } from 'app';
 
-process.on('unhandledRejection', error => console.error(error));
+import { winston } from '../api/logger';
+
+process.on('unhandledRejection', (error) => {
+  error.name = 'UnhandledException';
+  winston.error(error);
+});
 
 const targetUrl = `http://${config.apiHost}:${config.apiPort}`;
-const pretty = new PrettyError();
 const app = express();
 const server = new http.Server(app);
 const proxy = httpProxy.createProxyServer({
   target: targetUrl,
-  ws: true
+  ws: true,
 });
 
 app.use(cookieParser());
@@ -60,13 +63,14 @@ server.on('upgrade', (req, socket, head) => {
 // added the error handling to avoid https://github.com/nodejitsu/node-http-proxy/issues/527
 proxy.on('error', (error, req, res) => {
   if (error.code !== 'ECONNRESET') {
-    console.error('proxy error', error);
+    error.name = 'ProxyException';
+    winston.error(error);
   }
   if (!res.headersSent) {
     res.writeHead(500, { 'content-type': 'application/json' });
   }
 
-  const json = { error: 'proxy_error', reason: error.message };
+  const json = { error: 'proxy_error', reason: error.message || error };
   res.end(JSON.stringify(json));
 });
 
@@ -79,7 +83,7 @@ app.use((req, res) => {
   const providers = {
     client: new ApiClient(req),
     app: createApp(req),
-    restApp: createApp(req)
+    restApp: createApp(req),
   };
   const memoryHistory = createHistory(req.originalUrl);
   const store = createStore(memoryHistory, providers);
@@ -91,18 +95,20 @@ app.use((req, res) => {
   }
 
   if (__DISABLE_SSR__) {
-    return hydrateOnClient();
+    hydrateOnClient();
+    return;
   }
 
   match({
     history,
     routes: getRoutes(store),
-    location: req.originalUrl
+    location: req.originalUrl,
   }, (error, redirectLocation, renderProps) => {
     if (redirectLocation) {
       res.redirect(redirectLocation.pathname + redirectLocation.search);
     } else if (error) {
-      console.error('ROUTER ERROR:', pretty.render(error));
+      error.name = 'RouterException';
+      winston.error(error);
       res.status(500);
       hydrateOnClient();
     } else if (renderProps) {
@@ -119,10 +125,11 @@ app.use((req, res) => {
 
         res.send(`<!doctype html>
         ${ReactDOM.renderToString(
-          <Html assets={webpackIsomorphicTools.assets()} component={component} store={store} />
+          <Html assets={webpackIsomorphicTools.assets()} component={component} store={store} />,
         )}`);
-      }).catch(mountError => {
-        console.error('MOUNT ERROR:', pretty.render(mountError));
+      }).catch((mountError) => {
+        mountError.name = 'MountException';
+        winston.error(mountError);
         res.status(500);
         hydrateOnClient();
       });
@@ -133,13 +140,17 @@ app.use((req, res) => {
 });
 
 if (config.port) {
-  server.listen(config.port, err => {
+  server.listen(config.port, (err) => {
     if (err) {
-      console.error(err);
+      err.name = 'StartupException';
+      winston.error(err);
     }
-    console.info('----\n==> ✅  %s is running, talking to API server on %s.', config.app.title, config.apiPort);
-    console.info('==> 💻  Open http://%s:%s in a browser to view the app.', config.host, config.port);
+    winston.info('==> 📡  App is running on port %s', config.port);
+    winston.info('==> 🔗  Proxying api server on endpoint http://%s:%s/api/', config.host, config.port);
+    winston.info('==> 💻  Open http://%s:%s in a browser to view the app.', config.host, config.port);
   });
 } else {
-  console.error('==>     ERROR: No PORT environment variable has been specified');
+  const err = new Error('No PORT environment variable has been specified');
+  err.name = 'StartupException';
+  winston.error(err);
 }
