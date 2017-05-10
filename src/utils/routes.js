@@ -6,14 +6,14 @@ export default function getRoutesUtils(store) {
   function injectReducerAndRender(reducerPromises, containerPromise) {
     const reducerNames = Object.keys(reducerPromises);
     return Promise.all(Object.values(reducerPromises))
-      .then(reducers => {
+      .then((reducers) => {
         reducers.map((reducer, i) => store.inject(reducerNames[i], reducer.default || reducer));
         if (!isPromise(containerPromise) && typeof containerPromise === 'object') {
           const containerNames = Object.keys(containerPromise);
           return Promise.all(Object.values(containerPromise))
-            .then(containers => containers.reduce((prev, next, i) => ({
+            .then((containers) => containers.reduce((prev, next, i) => ({
               ...prev,
-              [containerNames[i]]: next.default || next
+              [containerNames[i]]: next.default || next,
             }), {}));
         }
         return containerPromise;
@@ -30,11 +30,17 @@ export default function getRoutesUtils(store) {
       async.eachSeries(listOfOnEnters, (onEnter, callback) => {
         if (!redirected) {
           const result = onEnter(store, nextState, wrappedReplace);
-          if (isPromise(result)) return result.then(() => callback(), callback);
+          if (isPromise(result)) {
+            result.then(() => callback(), callback);
+            return;
+          }
         }
         callback();
-      }, err => {
-        if (err) onEnterCb(err);
+      }, (err) => {
+        if (err) {
+          onEnterCb(err);
+          return;
+        }
         onEnterCb();
       });
     };
@@ -52,22 +58,22 @@ export default function getRoutesUtils(store) {
   }
 
   function enterPermissions(...listOfPermissions) {
-    const permissions = [loadAuthIfNeeded].concat(listOfPermissions.map(perm => perm.onEnter || perm));
+    const permissions = [loadAuthIfNeeded].concat(listOfPermissions.map((perm) => perm.onEnter || perm));
     return onEnterChain(...permissions);
   }
 
   function permissionsComponent(...listOfPermissions) {
-    return (component = props => props.children) => ({
+    return (component = (props) => props.children) => ({
       onEnter: enterPermissions(...listOfPermissions),
       getComponent: () => checkPermissions(listOfPermissions.reduceRight(
         (prev, next) => next(prev),
-        component
-      ))
+        component,
+      )),
     });
   }
 
   return {
     injectReducerAndRender,
-    permissionsComponent
+    permissionsComponent,
   };
 }

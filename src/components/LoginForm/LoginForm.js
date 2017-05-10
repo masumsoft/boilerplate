@@ -4,11 +4,11 @@ import loginValidation from './loginValidation';
 
 @reduxForm({
   form: 'login',
-  validate: loginValidation
+  validate: loginValidation,
 })
 export default class LoginForm extends Component {
   static propTypes = {
-    ...propTypes
+    ...propTypes,
   }
 
   renderInput = ({ input, label, type, meta: { touched, error } }) =>

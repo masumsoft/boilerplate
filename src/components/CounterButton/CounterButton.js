@@ -6,21 +6,22 @@ import { increment } from 'redux/modules/counter';
 
 @connect(
   (state, { multireducerKey: key }) => ({ count: state.counter[key].count }),
-  (dispatch, { multireducerKey: key }) => bindActionCreators({ increment }, dispatch, key)
+  (dispatch, { multireducerKey: key }) => bindActionCreators({ increment }, dispatch, key),
 )
 export default class CounterButton extends Component {
   static propTypes = {
     count: PropTypes.number.isRequired,
     increment: PropTypes.func.isRequired,
-    className: PropTypes.string
+    className: PropTypes.string,
   }
 
   static defaultProps = {
-    className: ''
+    className: '',
   }
 
   render() {
-    const { count, increment } = this.props; // eslint-disable-line no-shadow
+    // eslint-disable-next-line no-shadow
+    const { count, increment } = this.props;
     let { className } = this.props;
     className += ' btn btn-default';
     return (

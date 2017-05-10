@@ -16,7 +16,7 @@ const LOGOUT_SUCCESS = 'redux-example/auth/LOGOUT_SUCCESS';
 const LOGOUT_FAIL = 'redux-example/auth/LOGOUT_FAIL';
 
 const initialState = {
-  loaded: false
+  loaded: false,
 };
 
 export default function reducer(state = initialState, action = {}) {
@@ -24,7 +24,7 @@ export default function reducer(state = initialState, action = {}) {
     case LOAD:
       return {
         ...state,
-        loading: true
+        loading: true,
       };
     case LOAD_SUCCESS:
       return {
@@ -32,73 +32,73 @@ export default function reducer(state = initialState, action = {}) {
         loading: false,
         loaded: true,
         accessToken: action.result.accessToken,
-        user: action.result.user
+        user: action.result.user,
       };
     case LOAD_FAIL:
       return {
         ...state,
         loading: false,
         loaded: false,
-        error: action.error
+        error: action.error,
       };
     case LOGIN:
       return {
         ...state,
-        loggingIn: true
+        loggingIn: true,
       };
     case LOGIN_SUCCESS:
       return {
         ...state,
         loggingIn: false,
         accessToken: action.result.accessToken,
-        user: action.result.user
+        user: action.result.user,
       };
     case LOGIN_FAIL:
       return {
         ...state,
         loggingIn: false,
-        loginError: action.error
+        loginError: action.error,
       };
     case REGISTER:
       return {
         ...state,
-        registeringIn: true
+        registeringIn: true,
       };
     case REGISTER_SUCCESS:
       return {
         ...state,
-        registeringIn: false
+        registeringIn: false,
       };
     case REGISTER_FAIL:
       return {
         ...state,
         registeringIn: false,
-        registerError: action.error
+        registerError: action.error,
       };
     case LOGOUT:
       return {
         ...state,
-        loggingOut: true
+        loggingOut: true,
       };
     case LOGOUT_SUCCESS:
       return {
         ...state,
         loggingOut: false,
         accessToken: null,
-        user: null
+        user: null,
       };
     case LOGOUT_FAIL:
       return {
         ...state,
         loggingOut: false,
-        logoutError: action.error
+        logoutError: action.error,
       };
     default:
       return state;
   }
 }
 
-const catchValidation = error => {
+const catchValidation = (error) => {
   if (error.message) {
     if (error.message === 'Validation failed' && error.data) {
       throw new SubmissionError(error.data);
@@ -109,7 +109,7 @@ const catchValidation = error => {
 };
 
 function setToken({ client, app, restApp }) {
-  return response => {
+  return (response) => {
     const { accessToken } = response;
 
     // set manually the JWT for both instances of feathers/client
@@ -122,7 +122,7 @@ function setToken({ client, app, restApp }) {
 }
 
 function setCookie({ app }) {
-  return response => {
+  return (response) => {
     const options = response.expires ? { expires: response.expires / (60 * 60 * 24 * 1000) } : undefined;
     cookie.set('feathers-jwt', app.get('accessToken'), options);
     return response;
@@ -140,14 +140,14 @@ export function isLoaded(globalState) {
 export function load() {
   return {
     types: [LOAD, LOAD_SUCCESS, LOAD_FAIL],
-    promise: ({ client }) => client.get('/auth/load')
+    promise: ({ client }) => client.get('/auth/load'),
   };
 }
 
 export function register(data) {
   return {
     types: [REGISTER, REGISTER_SUCCESS, REGISTER_FAIL],
-    promise: ({ app }) => app.service('users').create(data).catch(catchValidation)
+    promise: ({ app }) => app.service('users').create(data).catch(catchValidation),
   };
 }
 
@@ -158,15 +158,15 @@ export function login(strategy, data, validation = true) {
     promise: ({ client, restApp, app }) => restApp.authenticate({
       ...data,
       strategy,
-      socketId
+      socketId,
     })
       .then(setToken({ client, restApp, app }))
       .then(setCookie({ app }))
-      .then(response => {
+      .then((response) => {
         app.set('user', response.user);
         return response;
       })
-      .catch(validation ? catchValidation : error => Promise.reject(error))
+      .catch(validation ? catchValidation : (error) => Promise.reject(error)),
   };
 }
 
@@ -174,6 +174,6 @@ export function logout() {
   return {
     types: [LOGOUT, LOGOUT_SUCCESS, LOGOUT_FAIL],
     promise: ({ client, app, restApp }) => app.logout()
-      .then(() => setToken({ client, app, restApp })({ accessToken: null }))
+      .then(() => setToken({ client, app, restApp })({ accessToken: null })),
   };
 }

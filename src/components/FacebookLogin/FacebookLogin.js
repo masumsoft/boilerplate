@@ -14,7 +14,7 @@ class FacebookLogin extends Component {
     textButton: PropTypes.string,
     typeButton: PropTypes.string,
     className: PropTypes.string,
-    component: PropTypes.func.isRequired
+    component: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
@@ -26,7 +26,7 @@ class FacebookLogin extends Component {
     cookie: false,
     version: '2.3',
     language: 'en_US',
-    autoLoad: false
+    autoLoad: false,
   }
 
   componentDidMount() {
@@ -54,7 +54,9 @@ class FacebookLogin extends Component {
     };
     // Load the SDK asynchronously
     ((d, id) => {
-      if (d.getElementById(id)) return;
+      if (d.getElementById(id)) {
+        return;
+      }
       const js = d.createElement('script');
       js.id = id;
       js.src = `//connect.facebook.net/${language}/all.js`;
@@ -68,7 +70,7 @@ class FacebookLogin extends Component {
       window.location.href = `https://www.facebook.com/dialog/oauth?client_id=${appId}` +
         `&redirect_uri=${window.location.href}&state=facebookdirect&${scope}`;
     } else {
-      window.FB.login(response => {
+      window.FB.login((response) => {
         if (response.authResponse) {
           this.props.onLogin(null, response.authResponse);
         } else {
@@ -81,7 +83,9 @@ class FacebookLogin extends Component {
   render() {
     const { className, textButton, typeButton, component: WrappedComponent } = this.props;
 
-    if (WrappedComponent) return <WrappedComponent facebookLogin={this.click} />;
+    if (WrappedComponent) {
+      return <WrappedComponent facebookLogin={this.click} />;
+    }
 
     return (
       <button className={className} onClick={this.click} type={typeButton}>

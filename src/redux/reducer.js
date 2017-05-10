@@ -21,12 +21,12 @@ export default function createReducers(asyncReducers) {
     counter: multireducer({
       counter1: counter,
       counter2: counter,
-      counter3: counter
+      counter3: counter,
     }),
     info,
     // widgets,
     // survey,
     // chat,
-    ...asyncReducers
+    ...asyncReducers,
   };
 }

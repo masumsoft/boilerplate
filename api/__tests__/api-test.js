@@ -5,7 +5,7 @@ describe('mapUrl', () => {
   it('extracts nothing if both params are undefined', () => {
     expect(mapUrl(undefined, undefined)).to.deep.equal({
       action: null,
-      params: []
+      params: [],
     });
   });
 
@@ -16,7 +16,7 @@ describe('mapUrl', () => {
 
     expect(mapUrl(availableActions, splittedUrlPath)).to.deep.equal({
       action: null,
-      params: []
+      params: [],
     });
   });
 
@@ -27,7 +27,7 @@ describe('mapUrl', () => {
 
     expect(mapUrl(availableActions, splittedUrlPath)).to.deep.equal({
       action: null,
-      params: []
+      params: [],
     });
   });
 
@@ -38,7 +38,7 @@ describe('mapUrl', () => {
 
     expect(mapUrl(availableActions, splittedUrlPath)).to.deep.equal({
       action: availableActions.widget.load,
-      params: ['param1', 'xzy']
+      params: ['param1', 'xzy'],
     });
   });
 
@@ -49,7 +49,7 @@ describe('mapUrl', () => {
 
     expect(mapUrl(availableActions, splittedUrlPath)).to.deep.equal({
       action: availableActions.widget.load,
-      params: ['']
+      params: [''],
     });
   });
 
@@ -60,7 +60,7 @@ describe('mapUrl', () => {
 
     expect(mapUrl(availableActions, splittedUrlPath)).to.deep.equal({
       action: null,
-      params: []
+      params: [],
     });
   });
 });

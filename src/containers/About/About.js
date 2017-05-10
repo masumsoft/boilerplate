@@ -5,12 +5,17 @@ import { isLoaded as isInfoLoaded, load as loadInfo } from 'redux/modules/info';
 import { asyncConnect } from 'redux-connect';
 
 @asyncConnect([{
-  promise: ({ store: { dispatch, getState } }) => (!isInfoLoaded(getState()) ? dispatch(loadInfo()) : Promise.resolve())
+  promise: ({ store: { dispatch, getState } }) => {
+    if (!isInfoLoaded(getState())) {
+      return dispatch(loadInfo());
+    }
+    return Promise.resolve();
+  },
 }])
 export default class About extends Component {
 
   state = {
-    showKitten: false
+    showKitten: false,
   }
 
   handleToggleKitten = () => this.setState({ showKitten: !this.state.showKitten });

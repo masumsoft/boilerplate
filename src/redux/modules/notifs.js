@@ -12,9 +12,9 @@ export default function reducer(state = initialState, action = {}) {
     case NOTIF_DISMISS:
       return {
         ...state,
-        [action.namespace]: (state[action.namespace] || []).filter(notif =>
-          notif.id !== action.payload
-        )
+        [action.namespace]: (state[action.namespace] || []).filter((notif) =>
+          notif.id !== action.payload,
+        ),
       };
     case NOTIF_CLEAR:
       return { ...state, [action.namespace]: [] };
@@ -27,9 +27,10 @@ export default function reducer(state = initialState, action = {}) {
 
 export function notifSend(notif, namespace = 'global') {
   if (!notif.id) {
+    // eslint-disable-next-line no-param-reassign
     notif.id = new Date().getTime() * Math.random();
   }
-  return dispatch => {
+  return (dispatch) => {
     dispatch({ type: NOTIF_SEND, namespace, payload: notif });
 
     if (notif.dismissAfter) {

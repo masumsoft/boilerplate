@@ -15,7 +15,7 @@ function formatUrl(path) {
 
 export default class ApiClient {
   constructor(req) {
-    methods.forEach(method => {
+    methods.forEach((method) => {
       this[method] = (path, { params, data, headers, files, fields } = {}) => new Promise((resolve, reject) => {
         const request = superagent[method](formatUrl(path));
 
@@ -36,11 +36,11 @@ export default class ApiClient {
         }
 
         if (files) {
-          files.forEach(file => request.attach(file.key, file.value));
+          files.forEach((file) => request.attach(file.key, file.value));
         }
 
         if (fields) {
-          fields.forEach(item => request.field(item.key, item.value));
+          fields.forEach((item) => request.field(item.key, item.value));
         }
 
         if (data) {

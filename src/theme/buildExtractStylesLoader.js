@@ -37,6 +37,6 @@ module.exports = function buildExtractStylesLoader(loaders) {
 
   return [
     extractTextLoader,
-    fallbackLoader
+    fallbackLoader,
   ].concat(restLoaders).join('!');
 };

@@ -30,7 +30,7 @@ function warnAboutReceivingStore() {
     'It is most likely that you see this error because you updated to ' +
     'Redux 2.x and React Redux 2.x which no longer hot reload reducers ' +
     'automatically. See https://github.com/reactjs/react-redux/releases/' +
-    'tag/v2.0.0 for the migration instructions.'
+    'tag/v2.0.0 for the migration instructions.',
   );
 }
 
@@ -41,9 +41,9 @@ export default class Provider extends Component {
     store: PropTypes.shape({
       subscribe: PropTypes.func.isRequired,
       dispatch: PropTypes.func.isRequired,
-      getState: PropTypes.func.isRequired
+      getState: PropTypes.func.isRequired,
     }).isRequired,
-    children: PropTypes.element.isRequired
+    children: PropTypes.element.isRequired,
   };
 
   static childContextTypes = {
@@ -52,14 +52,14 @@ export default class Provider extends Component {
     store: PropTypes.shape({
       subscribe: PropTypes.func.isRequired,
       dispatch: PropTypes.func.isRequired,
-      getState: PropTypes.func.isRequired
+      getState: PropTypes.func.isRequired,
     }).isRequired,
     storeSubscription: PropTypes.shape({
       trySubscribe: PropTypes.func.isRequired,
       tryUnsubscribe: PropTypes.func.isRequired,
       notifyNestedSubs: PropTypes.func.isRequired,
       isSubscribed: PropTypes.func.isRequired,
-    })
+    }),
   };
 
   constructor(props, context) {
@@ -78,7 +78,7 @@ export default class Provider extends Component {
     };
   }
 
-  componentWillReceiveProps = nextProps => {
+  componentWillReceiveProps = (nextProps) => {
     if (process.env.NODE_ENV !== 'production') {
       const { store } = this;
       const { store: nextStore } = nextProps;

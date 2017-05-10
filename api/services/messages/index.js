@@ -8,12 +8,12 @@ export default function messagesService() {
   const options = {
     Model: new NeDB({
       filename: `${__dirname}/messages.nedb`,
-      autoload: true
+      autoload: true,
     }),
     paginate: {
       default: 25,
-      max: 100
-    }
+      max: 100,
+    },
   };
 
   app.use('/messages', feathersNedb(options));

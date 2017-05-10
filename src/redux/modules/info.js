@@ -3,7 +3,7 @@ const LOAD_SUCCESS = 'redux-example/info/LOAD_SUCCESS';
 const LOAD_FAIL = 'redux-example/info/LOAD_FAIL';
 
 const initialState = {
-  loaded: false
+  loaded: false,
 };
 
 export default function info(state = initialState, action = {}) {
@@ -11,21 +11,21 @@ export default function info(state = initialState, action = {}) {
     case LOAD:
       return {
         ...state,
-        loading: true
+        loading: true,
       };
     case LOAD_SUCCESS:
       return {
         ...state,
         loading: false,
         loaded: true,
-        data: action.result
+        data: action.result,
       };
     case LOAD_FAIL:
       return {
         ...state,
         loading: false,
         loaded: false,
-        error: action.error
+        error: action.error,
       };
     default:
       return state;
@@ -39,6 +39,6 @@ export function isLoaded(globalState) {
 export function load() {
   return {
     types: [LOAD, LOAD_SUCCESS, LOAD_FAIL],
-    promise: ({ client }) => client.get('/loadInfo')
+    promise: ({ client }) => client.get('/loadInfo'),
   };
 }

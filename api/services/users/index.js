@@ -8,12 +8,12 @@ export default function userService() {
   const options = {
     Model: new NeDB({
       filename: `${__dirname}/users.nedb`,
-      autoload: true
+      autoload: true,
     }),
     paginate: {
       default: 5,
-      max: 25
-    }
+      max: 25,
+    },
   };
 
   app.use('/users', feathersNedb(options));

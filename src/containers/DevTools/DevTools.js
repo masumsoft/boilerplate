@@ -8,5 +8,5 @@ export default createDevTools(
     toggleVisibilityKey="ctrl-H"
     changePositionKey="ctrl-Q">
     <LogMonitor />
-  </DockMonitor>
+  </DockMonitor>,
 );

@@ -13,15 +13,18 @@ import Helmet from 'react-helmet';
  * HTML doctype declaration, which is added to the rendered output
  * by the server.js file.
  */
+
+/* eslint-disable react/no-danger */
+
 export default class Html extends Component {
   static propTypes = {
     assets: PropTypes.object,
     component: PropTypes.node.isRequired,
-    store: PropTypes.object.isRequired
+    store: PropTypes.object.isRequired,
   };
 
   static defaultProps = {
-    assets: {}
+    assets: {},
   };
 
   render() {
@@ -48,10 +51,10 @@ export default class Html extends Component {
           <meta name="apple-mobile-web-app-title" content="React Hot" />
           <meta name="theme-color" content="#3677dd" />
           {/* styles (will be present only in production with webpack extract text plugin) */}
-          {assets.styles && Object.keys(assets.styles).map(style =>
+          {assets.styles && Object.keys(assets.styles).map((style) =>
             <link
               href={assets.styles[style]} key={style} media="screen, projection"
-              rel="stylesheet" type="text/css" charSet="UTF-8" />
+              rel="stylesheet" type="text/css" charSet="UTF-8" />,
           )}
 
           {/* (will be present only in development mode) */}

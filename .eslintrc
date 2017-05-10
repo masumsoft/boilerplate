@@ -28,20 +28,20 @@
     "import/prefer-default-export": "off",
     "import/no-extraneous-dependencies": "off",
     "import/newline-after-import": "off",
-    "comma-dangle": "off", // not sure why airbnb turned this on. gross!
-    "consistent-return": "off",
-    "no-param-reassign": "off",
-    "prefer-template": "warn",
     "global-require": "off",
     "no-case-declarations": "off",
     "no-underscore-dangle": "off",
-    "arrow-parens": "off",
-    "class-methods-use-this": "off",
-    "no-bitwise": "off",
+    "arrow-parens": ["error", "always"],
+    "no-param-reassign": "off",
     "no-plusplus": "off",
-    "no-console": "off",
-    "no-alert": "off",
-    "max-len": ["error", 120],
+    "max-len": ["error", 120, 2, {
+      "ignoreUrls": true,
+      "ignoreComments": false,
+      "ignoreRegExpLiterals": true,
+      "ignoreStrings": true,
+      "ignoreTemplateLiterals": true
+    }],
+    "curly": ["error", "all"],
     "indent": ["error", 2, {"SwitchCase": 1}]
   },
   "plugins": [

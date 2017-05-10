@@ -11,9 +11,9 @@ import config from './config';
 
 const storage = __SERVER__ ? require('localstorage-memory') : require('localforage');
 
-const host = clientUrl => (__SERVER__ ? `http://${config.apiHost}:${config.apiPort}` : clientUrl);
+const host = (clientUrl) => (__SERVER__ ? `http://${config.apiHost}:${config.apiPort}` : clientUrl);
 
-const configureApp = transport => feathers()
+const configureApp = (transport) => feathers()
   .configure(transport)
   .configure(hooks())
   .configure(authentication({ storage }));
@@ -29,8 +29,8 @@ export function createApp(req) {
     const app = configureApp(rest(host('/api')).superagent(superagent, {
       headers: {
         Cookie: req.get('cookie'),
-        authorization: req.header('authorization') || ''
-      }
+        authorization: req.header('authorization') || '',
+      },
     }));
 
     const accessToken = req.header('authorization') || (req.cookies && req.cookies['feathers-jwt']);
