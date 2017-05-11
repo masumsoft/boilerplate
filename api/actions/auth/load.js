@@ -6,15 +6,15 @@ export default function load(req) {
 
   const defaultValues = {
     accessToken,
-    user: null
+    user: null,
   };
 
   if (accessToken) {
     return verifyJWT(accessToken, config.auth)
-      .then(payload => req.app.service('users').get(payload.userId))
-      .then(user => ({
+      .then((payload) => req.app.service('users').get(payload.userId))
+      .then((user) => ({
         accessToken,
-        user
+        user,
       }))
       .catch(() => defaultValues);
   }
