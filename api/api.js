@@ -5,6 +5,7 @@ import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import hooks from 'feathers-hooks';
 import rest from 'feathers-rest';
+import swagger from 'feathers-swagger';
 import socketio from 'feathers-socketio';
 import isPromise from 'is-promise';
 import publicConfig from '../src/config';
@@ -12,7 +13,7 @@ import config from './config';
 import middleware from './middleware';
 import services from './services';
 import * as actions from './actions';
-import { winston, requestLogger, errorLogger } from './logger';
+import { winston, requestLogger } from './logger';
 import { mapUrl } from './utils/url.js';
 import auth, { socketAuth } from './services/authentication';
 
@@ -43,7 +44,7 @@ const actionsHandler = (req, res, next) => {
 
   const catchError = (error) => {
     error.name = 'APIException';
-    app.error(error);
+    winston.error(error);
     res.status(error.status || 500).json({
       error: {
         name: error.name,
@@ -85,7 +86,14 @@ app.configure(hooks())
   .configure(rest())
   .configure(socketio({ path: '/ws' }))
   .configure(auth)
-  .use(errorLogger)
+  .configure(swagger({
+    docsPath: '/docs',
+    uiIndex: true,
+    info: {
+      title: 'API Docs',
+      description: 'This is the description of api docs',
+    },
+  }))
   .use(actionsHandler)
   .configure(services)
   .configure(middleware);
@@ -94,15 +102,15 @@ if (publicConfig.apiPort) {
   app.listen(publicConfig.apiPort, (err) => {
     if (err) {
       err.name = 'StartupException';
-      app.error(err);
+      winston.error(err);
     }
-    app.info('==> ☁️  API is running on port %s', publicConfig.apiPort);
-    app.info('==> 💻  Send requests to http://%s:%s', publicConfig.apiHost, publicConfig.apiPort);
+    winston.info('==> ☁️  API is running on port %s', publicConfig.apiPort);
+    winston.info('==> 💻  Send requests to http://%s:%s', publicConfig.apiHost, publicConfig.apiPort);
   });
 } else {
   const err = new Error('No APIPORT environment variable has been specified');
   err.name = 'StartupException';
-  app.error(err);
+  winston.error(err);
 }
 
 const bufferSize = 100;
@@ -134,6 +142,6 @@ app.io.on('connection', (socket) => {
 
   socket.on('clientErrorLog', (error) => {
     error.name = 'ClientException';
-    app.error(error);
+    winston.error(error);
   });
 });

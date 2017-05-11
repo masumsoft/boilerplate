@@ -129,6 +129,7 @@
     "feathers-nedb": "^2.6.0",
     "feathers-rest": "^1.6.0",
     "feathers-socketio": "^1.4.2",
+    "feathers-swagger": "^0.4.0",
     "http-proxy": "^1.16.2",
     "immutable": "^3.8.1",
     "is-promise": "^2.1.0",
