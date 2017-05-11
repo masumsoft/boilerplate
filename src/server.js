@@ -22,7 +22,6 @@ import { createApp } from 'app';
 import { winston } from '../api/logger';
 
 process.on('unhandledRejection', (error) => {
-  error.name = 'UnhandledException';
   winston.error(error);
 });
 
@@ -63,19 +62,16 @@ server.on('upgrade', (req, socket, head) => {
 // added the error handling to avoid https://github.com/nodejitsu/node-http-proxy/issues/527
 proxy.on('error', (error, req, res) => {
   if (error.code !== 'ECONNRESET') {
-    error.name = 'ProxyException';
     winston.error(error);
   }
   if (!res.headersSent) {
-    res.writeHead(500, { 'content-type': 'application/json' });
+    res.writeHead(502, { 'content-type': 'application/json' });
   }
 
   const json = {
-    error: {
-      name: error.name,
-      message: error.message,
-      code: 500,
-    },
+    name: error.name || 'ProxyException',
+    message: error.message || error,
+    code: 502,
   };
   res.end(JSON.stringify(json));
 });
@@ -113,7 +109,6 @@ app.use((req, res) => {
     if (redirectLocation) {
       res.redirect(redirectLocation.pathname + redirectLocation.search);
     } else if (error) {
-      error.name = 'RouterException';
       winston.error(error);
       res.status(500);
       hydrateOnClient();
@@ -134,7 +129,6 @@ app.use((req, res) => {
           <Html assets={webpackIsomorphicTools.assets()} component={component} store={store} />,
         )}`);
       }).catch((mountError) => {
-        mountError.name = 'MountException';
         winston.error(mountError);
         res.status(500);
         hydrateOnClient();
@@ -148,15 +142,13 @@ app.use((req, res) => {
 if (config.port) {
   server.listen(config.port, (err) => {
     if (err) {
-      err.name = 'StartupException';
       winston.error(err);
+      return;
     }
     winston.info('==> 📡  App is running on port %s', config.port);
     winston.info('==> 🔗  Proxying api server on endpoint http://%s:%s/api/', config.host, config.port);
     winston.info('==> 💻  Open http://%s:%s in a browser to view the app.', config.host, config.port);
   });
 } else {
-  const err = new Error('No PORT environment variable has been specified');
-  err.name = 'StartupException';
-  winston.error(err);
+  winston.error('No PORT environment variable has been specified');
 }

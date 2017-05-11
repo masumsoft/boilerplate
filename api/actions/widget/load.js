@@ -19,7 +19,7 @@ export default function load(req) {
     // make async call to database
     setTimeout(() => {
       if (Math.random() < 0.33) {
-        reject(new Error('Widget load fails 33% of the time. You were unlucky.'));
+        reject('Widget load fails 33% of the time. You were unlucky.');
       } else {
         resolve(getWidgets(req));
       }
