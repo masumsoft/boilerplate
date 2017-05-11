@@ -3,6 +3,7 @@
  * @param loader
  * @returns {string}
  */
+
 function encodeLoader(loader) {
   if (typeof loader === 'string') {
     return loader;
@@ -22,6 +23,7 @@ function encodeLoader(loader) {
  * buildExtractStylesLoader can also deal with options without any trouble as
  * it converts them to query parameters if needed.
  */
+
 module.exports = function buildExtractStylesLoader(loaders) {
   const extractTextLoader = encodeLoader(loaders[0]);
   const fallbackLoader = encodeLoader(loaders[1]);
