@@ -33,8 +33,9 @@ function unique(field) {
   return (value, data, { hook }) => hook.service.find({ query: { [field]: value } })
     .then((result) => {
       if (result.total !== 0) {
-        Promise.reject('Already exist');
+        return Promise.reject('Already exist');
       }
+      return null;
     });
 }
 

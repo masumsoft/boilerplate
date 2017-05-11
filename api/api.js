@@ -18,7 +18,6 @@ import { mapUrl } from './utils/url.js';
 import auth, { socketAuth } from './services/authentication';
 
 process.on('unhandledRejection', (error) => {
-  error.name = 'UnhandledException';
   winston.error(error);
 });
 
@@ -43,15 +42,8 @@ const actionsHandler = (req, res, next) => {
   const { action, params } = mapUrl(actions, splittedUrlPath);
 
   const catchError = (error) => {
-    error.name = 'APIException';
     winston.error(error);
-    res.status(error.status || 500).json({
-      error: {
-        name: error.name,
-        message: error.message,
-        code: error.status || 500,
-      },
-    });
+    res.status(error.status || 500).json(error);
   };
 
   req.app = app;
@@ -101,16 +93,13 @@ app.configure(hooks())
 if (publicConfig.apiPort) {
   app.listen(publicConfig.apiPort, (err) => {
     if (err) {
-      err.name = 'StartupException';
       winston.error(err);
     }
     winston.info('==> ☁️  API is running on port %s', publicConfig.apiPort);
     winston.info('==> 💻  Send requests to http://%s:%s', publicConfig.apiHost, publicConfig.apiPort);
   });
 } else {
-  const err = new Error('No APIPORT environment variable has been specified');
-  err.name = 'StartupException';
-  winston.error(err);
+  winston.error('==> No APIPORT environment variable has been specified');
 }
 
 const bufferSize = 100;
